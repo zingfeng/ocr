@@ -28,7 +28,7 @@
     "pdf-poppler": "^0.2.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "unoconv": "^0.1.2"
+    "unoconv2": "^1.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
-import * as unoconv from 'unoconv';
+import * as unoconv from 'unoconv2';
 import * as pdf from 'pdf-poppler';
 import * as path from 'path';
 
@@ -53,16 +53,31 @@ export class ConverterService {
 
   async convertPptToImage() {
     // await get(ConverterService).convertPptToImage()
-    unoconv.convert('../sample/ppt/example.ppt', 'pdf', function (err, result) {
+
+    const res = await unoconv.detectSupportedFormats(  function (err, result) {
+      if (err) {
+        console.log('error');
+        console.log(err);
+      } else {
+        console.log('success');
+        console.log(result);
+      }
+    });
+console.log(res);
+
+    // pdf, png, jpg is available
+
+    await unoconv.convert('../sample/ppt/example.ppt','png', function (err, result) {
       // result is returned as a Buffer
       console.log('tick');
-      fs.writeFile('converted.pdf', result, function (err) {
+      fs.writeFile('converted.png', result, function (err) {
         //fs.writeFile('converted.pdf', result, function(err) {
         if (err) {
           console.log('error');
           console.log(err);
         } else {
           console.log('success');
+
         }
       });
     });
