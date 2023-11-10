@@ -17,3 +17,12 @@
 
 ## Note
 - Use env Linux (Ubuntu)
+
+
+
+## Python
+
+To update requirement
+```
+pip freeze > requirements.txt
+```
