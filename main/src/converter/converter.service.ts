@@ -4,6 +4,16 @@ import * as unoconv from 'unoconv2';
 import * as pdf from 'pdf-poppler';
 import * as path from 'path';
 
+export enum ImageType {
+  PNG = 'png',
+  JPG = 'jpg',
+  JPEG = 'jpeg',
+}
+
+export enum DocumentType {
+  PDF = 'pdf',
+}
+
 @Injectable()
 export class ConverterService {
   /**
@@ -47,39 +57,72 @@ export class ConverterService {
       isSuccess: !!res?.isSuccess,
       outputPath,
     };
-    // await get(ConverterService).convertPdfToImage()
     // await get(ConverterService).convertPdfToImage('../sample/pdf/sample1.pdf')
   }
 
-  async convertPptToImage() {
-    // await get(ConverterService).convertPptToImage()
+  // await get(ConverterService).convertPptOrPptxToImage()
+  async convertPptOrPptxToImage(
+    inputPath: string,
+    outputPath?: string,
+    imageType?: ImageType,
+  ): Promise<{
+    isSuccess: boolean;
+    outputPath?: string;
+  }> {
+    imageType = imageType || ImageType.PNG;
+    outputPath = outputPath || path.dirname(inputPath);
 
-    const res = await unoconv.detectSupportedFormats(  function (err, result) {
-      if (err) {
-        console.log('error');
-        console.log(err);
-      } else {
-        console.log('success');
-        console.log(result);
-      }
-    });
-console.log(res);
+    const output = `${outputPath}.${imageType}`;
+    const isSuccess = await unoconv.convert(
+      inputPath,
+      imageType,
+      async function (err, result) {
+        return await fs.writeFile(output, result, function (err) {
+          if (err) {
+            console.log('convertPptOrPptxToImage error');
+            console.log(err);
+            return false;
+          }
+          return true;
+        });
+      },
+    );
 
-    // pdf, png, jpg is available
+    return {
+      isSuccess,
+      outputPath: output,
+    };
+  }
 
-    await unoconv.convert('../sample/ppt/example.ppt','png', function (err, result) {
-      // result is returned as a Buffer
-      console.log('tick');
-      fs.writeFile('converted.png', result, function (err) {
-        //fs.writeFile('converted.pdf', result, function(err) {
-        if (err) {
-          console.log('error');
-          console.log(err);
-        } else {
-          console.log('success');
+  // await get(ConverterService).convertPptOrPptxToPdf()
+  async convertPptOrPptxToPdf(
+    inputPath: string,
+    outputPath?: string,
+  ): Promise<{
+    isSuccess: boolean;
+    outputPath?: string;
+  }> {
+    outputPath = outputPath || path.dirname(inputPath);
 
-        }
-      });
-    });
+    const output = `${outputPath}.${DocumentType.PDF}`;
+    const isSuccess = await unoconv.convert(
+      inputPath,
+      'pdf',
+      async function (err, result) {
+        return await fs.writeFile(output, result, function (err) {
+          if (err) {
+            console.log('convertPptOrPptxToPdf error');
+            console.log(err);
+            return false;
+          }
+          return true;
+        });
+      },
+    );
+
+    return {
+      isSuccess,
+      outputPath: output,
+    };
   }
 }
