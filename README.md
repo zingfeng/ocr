@@ -14,3 +14,6 @@
 ### 4. Export
 - [ ] Export to moodle xml
 
+
+## Note
+- Use env Linux (Ubuntu)
