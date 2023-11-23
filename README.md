@@ -18,7 +18,8 @@
 ## Note
 - Use env Linux (Ubuntu)
 
-
+// python webserver
+certbot
 
 ## Python
 
@@ -26,3 +27,7 @@ To update requirement
 ```
 pip freeze > requirements.txt
 ```
+
+// gan nhan anh dau vao
+(input =text)
+answer generation (multiple choice question)
