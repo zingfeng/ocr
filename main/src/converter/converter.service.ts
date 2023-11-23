@@ -94,6 +94,7 @@ export class ConverterService {
     };
   }
 
+
   // await get(ConverterService).convertPptOrPptxToPdf()
   async convertPptOrPptxToPdf(
     inputPath: string,
@@ -125,4 +126,64 @@ export class ConverterService {
       outputPath: output,
     };
   }
+
+  async convertPdfToPng(
+    inputPath: string,
+    outputPath?: string,
+    imageType?: ImageType,
+  ): Promise<{
+    isSuccess: boolean;
+    outputPath?: string;
+  }> {
+    imageType = imageType || ImageType.PNG;
+    outputPath = outputPath || path.dirname(inputPath);
+
+    const output = `${outputPath}.${imageType}`;
+    const isSuccess = await unoconv.convert(
+      inputPath,
+      imageType,
+      async function (err, result) {
+        return await fs.writeFile(output, result, function (err) {
+          if (err) {
+            console.log('convertPdfToPng error');
+            console.log(err);
+            return false;
+          }
+          return true;
+        });
+      },
+    );
+
+    return {
+      isSuccess,
+      outputPath: output,
+    };
+  }
+
+  // await get(ConverterService).demoConvertPptToImage()
+  async demoConvertPptToImage() {
+    console.log('1. Convert ppt to png');
+    await this.convertPptOrPptxToImage('../sample/ppt/example.ppt', '../output/ppt_to_png');
+  }
+
+  // await get(ConverterService).demoConvertPptToImage()
+  async demoConvertPptxToImage() {
+    console.log('2. Convert pptx to png');
+    await this.convertPptOrPptxToImage('../sample/ppt/example.pptx', '../output/pptx_to_png');
+  }
+
+
+  // await get(ConverterService).demoConvertPptToPdf()
+  async demoConvertPptToPdf() {
+    console.log('3. Convert ppt to pdf');
+    await this.convertPptOrPptxToPdf('../sample/ppt/example.pptx', '../output/ppt_to_pdf');
+  }
+
+
+  // await get(ConverterService).demoConvertPdfToPng()
+  async demoConvertPdfToPng() {
+    console.log('4. Convert pdf to png');
+    await this.convertPdfToPng('../sample/pdf/sample1.pdf', '../output/pdf_to_png');
+  }
+
 }

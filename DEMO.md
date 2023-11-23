@@ -1,0 +1,4 @@
+- Convert ppt, pptx to png
+- Convert pdf to pnf
+- Image segmentation
+- OCR
