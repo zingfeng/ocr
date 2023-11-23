@@ -28,6 +28,7 @@ To update requirement
 pip freeze > requirements.txt
 ```
 
-// gan nhan anh dau vao
-(input =text)
-answer generation (multiple choice question)
+// TO install tesseract
+```
+sudo apt install tesseract-ocr -y
+```
