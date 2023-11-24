@@ -17,7 +17,6 @@ import { catchError, firstValueFrom } from 'rxjs';
 @Controller('converter')
 export class ConverterController {
   constructor(private readonly httpService: HttpService) {}
-  // API updoad file
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -55,12 +54,10 @@ export class ConverterController {
     }),
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
     const fileExtension = file.originalname
       .split('.')
       .pop()
       ?.toLocaleLowerCase();
-    console.log(fileExtension);
 
     const filePath = file.path;
     const outputDir = file.destination.replace('input', 'output');
@@ -83,7 +80,6 @@ export class ConverterController {
         throw new BadRequestException(`Extension ${fileExtension} not allow`);
       }
 
-      console.log(outputDir);
       fs.mkdirSync(outputDir);
 
       const outputImageName = file.filename.replace(fileExtension, 'jpg');
@@ -102,10 +98,6 @@ export class ConverterController {
       imageName,
       `result_${imageName}`,
     );
-
-    console.log(imagePath);
-    console.log(outputExtractPath);
-
     const extraction = await this.extractTextFromImage(
       imagePath,
       outputExtractPath,
@@ -119,11 +111,6 @@ export class ConverterController {
 
   private async extractTextFromImage(imagePath: string, outputPath: string) {
     const formData = new FormData();
-    // data.append('image_path', '../../factory/input/1/input.jpg');
-    // data.append('output_path', '../../factory/output/1/output2222.jpg');
-
-    console.log(imagePath);
-    console.log(outputPath);
     formData.append('image_path', imagePath);
     formData.append('output_path', outputPath);
 
