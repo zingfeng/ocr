@@ -66,7 +66,8 @@ export class ConverterController {
     const outputDir = file.destination.replace('input', 'output');
 
     // Save input to order folder
-    //
+    let imagePath = filePath;
+
     // if not image, convert to image
     if (!['jpg', 'png', 'jpeg'].includes(fileExtension)) {
       const allowedExtensions = [
@@ -85,44 +86,75 @@ export class ConverterController {
       console.log(outputDir);
       fs.mkdirSync(outputDir);
 
-      const outputFileName = file.filename.replace(fileExtension, 'jpg');
-      const outputPath = `${outputDir}/${outputFileName}`;
+      const outputImageName = file.filename.replace(fileExtension, 'jpg');
 
-      const imagePath = await this.convertToImage(filePath, outputPath);
-      return imagePath;
+      imagePath = `${outputDir}/${outputImageName}`;
+      const { isSuccess } = await this.convertToImage(filePath, imagePath);
+
+      if (!isSuccess) {
+        throw new BadRequestException(`Convert file failed`);
+      }
     }
+
+    // extract text from image
+    const imageName = imagePath.split('/').pop();
+    const outputExtractPath = imagePath.replace(
+      imageName,
+      `result_${imageName}`,
+    );
+
+    console.log(imagePath);
+    console.log(outputExtractPath);
+
+    const extraction = await this.extractTextFromImage(
+      imagePath,
+      outputExtractPath,
+    );
+
+    return {
+      outputImagePath: imagePath,
+      extraction,
+    };
   }
 
-  private async extractTextFromImage(image_path: string, output_path: string) {
-    const data = new FormData();
+  private async extractTextFromImage(imagePath: string, outputPath: string) {
+    const formData = new FormData();
     // data.append('image_path', '../../factory/input/1/input.jpg');
     // data.append('output_path', '../../factory/output/1/output2222.jpg');
 
-    data.append('image_path', image_path);
-    data.append('output_path', output_path);
+    console.log(imagePath);
+    console.log(outputPath);
+    formData.append('image_path', imagePath);
+    formData.append('output_path', outputPath);
 
-    const BASE_URL_SERVICE_EXTRACT = 'http://localhost:3000/extract';
+    const BASE_URL_SERVICE_EXTRACT = 'http://localhost:4000/extract';
 
-    const config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: BASE_URL_SERVICE_EXTRACT,
-      data: data,
-    };
+    const { data } = await firstValueFrom(
+      this.httpService
+        .post(BASE_URL_SERVICE_EXTRACT, formData, {
+          headers: {
+            ...formData.getHeaders(),
+          },
+        })
+        .pipe(
+          catchError((error: axios.AxiosError) => {
+            console.log(error.response.data);
+            throw 'An error happened!';
+          }),
+        ),
+    );
 
-    this.httpService.axiosRef
-      .request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    return data;
   }
 
-  private async convertToImage(inputPath: string, outputPath: string) {
+  private async convertToImage(
+    inputPath: string,
+    outputPath: string,
+  ): Promise<{
+    isSuccess: boolean;
+  }> {
     console.log(`start convertToImage ${inputPath} to ${outputPath}`);
-    const BASE_URL_SERVICE_EXTRACT = 'http://192.168.1.8:100/unoconv/jpg';
+    const BASE_URL_SERVICE_CONVERT = 'http://192.168.1.8:100/unoconv/jpg';
 
     const file = fs.readFileSync(inputPath) as any;
     const filename = inputPath.split('/').pop();
@@ -132,7 +164,7 @@ export class ConverterController {
 
     const { data } = await firstValueFrom(
       this.httpService
-        .post(BASE_URL_SERVICE_EXTRACT, bodyFormData, {
+        .post(BASE_URL_SERVICE_CONVERT, bodyFormData, {
           headers: {
             ...bodyFormData.getHeaders(),
           },
@@ -146,12 +178,31 @@ export class ConverterController {
         ),
     );
 
-    const writer = fs.createWriteStream(outputPath);
-    data.pipe(writer); // Pipe the response stream to a file
+    const res = await this.saveFile(data, outputPath);
+    if (res === 'ok') {
+      return {
+        isSuccess: true,
+      };
+    }
+    return {
+      isSuccess: false,
+    };
+  }
 
-    return new Promise((resolve, reject) => {
-      writer.on('finish', resolve);
-      writer.on('error', reject);
-    });
+  private async saveFile(data, outputPath) {
+    try {
+      const writer = fs.createWriteStream(outputPath);
+      data.pipe(writer); // Pipe the response stream to a file
+
+      return new Promise((resolve, reject) => {
+        writer.on('finish', () => {
+          resolve('ok');
+        });
+        writer.on('error', reject);
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
   }
 }
