@@ -21,14 +21,18 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@types/multer": "^1.4.11",
+    "axios": "^1.6.2",
     "child_process": "^1.0.2",
     "pdf-poppler": "^0.2.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "unoconv2": "^1.0.0"
+    "unoconv2": "^1.0.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
