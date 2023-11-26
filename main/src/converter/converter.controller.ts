@@ -54,10 +54,13 @@ export class ConverterController {
     }),
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+
     const fileExtension = file.originalname
       .split('.')
       .pop()
       ?.toLocaleLowerCase();
+    console.log(fileExtension);
 
     const filePath = file.path;
     const outputDir = file.destination.replace('input', 'output');
