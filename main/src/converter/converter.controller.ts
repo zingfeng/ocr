@@ -107,8 +107,16 @@ export class ConverterController {
     );
 
     return {
-      outputImagePath: imagePath,
-      extraction,
+      imagePath: imagePath.replace('../factory', 'http://localhost:8000'),
+      extraction: extraction.map((extract) => {
+        return {
+          ...extract,
+          output_path: extract.output_path.replace(
+            '../factory',
+            'http://localhost:8000',
+          ),
+        };
+      }),
     };
   }
 
