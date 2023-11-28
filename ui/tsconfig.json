@@ -1,0 +1,14 @@
+{
+  "extends": "./.nuxt/tsconfig.json",
+
+  "compilerOptions": {
+    "types": [
+      "@nuxt/types",
+      "@types/node",
+      "@nuxtjs/i18n",
+      "@pinia-plugin-persistedstate/nuxt",
+      "@nuxtjs/color-mode"
+    ]
+  },
+  "exclude": ["node_modules", "dist"]
+}
