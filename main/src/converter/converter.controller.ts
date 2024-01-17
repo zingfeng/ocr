@@ -13,10 +13,14 @@ import * as fs from 'fs';
 import * as FormData from 'form-data';
 import * as axios from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
+import { GenerateQuestionService } from './generate-question.service';
 
 @Controller('converter')
 export class ConverterController {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly generateQuestionService: GenerateQuestionService,
+  ) {}
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -103,23 +107,14 @@ export class ConverterController {
       imageName,
       `result_${imageName}`,
     );
+
+    // TODO: save image to google drive
+
     const extraction = await this.extractTextFromImage(
       imagePath,
       outputExtractPath,
     );
-
-    return {
-      imagePath: imagePath.replace('../factory', 'http://localhost:8000'),
-      extraction: extraction.map((extract) => {
-        return {
-          ...extract,
-          output_path: extract.output_path.replace(
-            '../factory',
-            'http://localhost:8000',
-          ),
-        };
-      }),
-    };
+    return this.generateQuestionService.generate(extraction);
   }
 
   private async extractTextFromImage(imagePath: string, outputPath: string) {
