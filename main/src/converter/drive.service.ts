@@ -9,6 +9,7 @@ const auth = new google.auth.GoogleAuth({
 });
 const drive = google.drive({ version: 'v3', auth });
 console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+const folderId = '1Vb7ItYWYOyV_2ZEfyIb_sv5fQIK1wEZi'; // Change this to your folder ID
 
 @Injectable()
 export class DriveService {
@@ -19,7 +20,7 @@ export class DriveService {
     const newFolderId = await drive.files.create({
       requestBody: {
         name: new Date().toISOString(),
-        parents: ['1Vb7ItYWYOyV_2ZEfyIb_sv5fQIK1wEZi'],
+        parents: [folderId],
         mimeType: 'application/vnd.google-apps.folder',
       },
       fields: 'id, webViewLink',
@@ -61,8 +62,7 @@ export class DriveService {
     const { data } = await drive.files.create({
       requestBody: {
         name: fileName,
-        // parents: [process.env.GOOGLE_QR_CODE_FOLDER_ID],
-        parents: ['1Vb7ItYWYOyV_2ZEfyIb_sv5fQIK1wEZi'],
+        parents: [folderId],
         mimeType: 'image/png',
       },
       media: {
