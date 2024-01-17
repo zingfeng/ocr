@@ -1,13 +1,14 @@
 # OCR
  
 Service này cung cấp 1 API nhận vào 1 ảnh, nhận diện ký tự trên ảnh sau đó thay bằng các khối block A, B, C, D
+
 Sau đó generate câu hỏi trắc nghiệm dựa trên các ký tự đó.
 
 Ví dụ về output có thể xem tại đây: https://drive.google.com/drive/folders/1Vb7ItYWYOyV_2ZEfyIb_sv5fQIK1wEZi?usp=sharing
 
+Để call API: 
 ```
-curl --location 'http://localhost:8000/converter/upload' \
---form 'file=@"/path/to/image.jpg"'
+curl --location 'http://localhost:8000/converter/upload' --form 'file=@"/path/to/image.jpg"'
 ```
 
 ## Cấu trúc
@@ -26,7 +27,7 @@ yarn start:dev
 - Với python
 ```
 cd ./ocr 
-python main.python
+python main.py
 ```
 
 
@@ -34,8 +35,11 @@ python main.python
 (Cấu hình tại service NestJS)
 
 1/ Tạo google cloud project
+
 2/ Enable Google Drive API của project vừa tạo
+
 3/ Tạo service account credential 
+
 (https://developers.google.com/identity/protocols/oauth2/service-account?hl=vi#creatinganaccount)
 
 Tạo key tương ứng, sau đó tải về file JSON, lưu thành file google-service-account.json trong thư mục ./main (cùng thư mục với file  google-service-account.json.example)
