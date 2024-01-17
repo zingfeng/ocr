@@ -120,11 +120,16 @@ export class ConverterController {
     const jsonPath = imagePath.replace(imageName, 'data.json');
     fs.writeFileSync(jsonPath, JSON.stringify(res));
 
-    await this.driveService.uploadQuestion(outputExtractPath, jsonPath);
+    const ggDriveURL = await this.driveService.uploadQuestion(
+      outputExtractPath,
+      jsonPath,
+    );
 
     // delete input folder
     fs.rmdirSync(file.destination, { recursive: true });
-    return res;
+    return {
+      googleDriveURL: ggDriveURL,
+    };
   }
 
   private async extractTextFromImage(imagePath: string, outputPath: string) {

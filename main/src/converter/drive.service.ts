@@ -22,7 +22,7 @@ export class DriveService {
         parents: ['1Vb7ItYWYOyV_2ZEfyIb_sv5fQIK1wEZi'],
         mimeType: 'application/vnd.google-apps.folder',
       },
-      fields: 'id',
+      fields: 'id, webViewLink',
     });
 
     // upload image
@@ -52,6 +52,8 @@ export class DriveService {
       },
       fields: 'id',
     });
+
+    return newFolderId.data.webViewLink;
   }
 
   async upload(filePath: string): Promise<string> {
