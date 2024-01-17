@@ -67,6 +67,8 @@ export class ConverterController {
 
     // Save input to order folder
     let imagePath = filePath;
+    // replace character \ to /
+    imagePath = imagePath.replace(/\\/g, '/');
 
     // if not image, convert to image
     if (!['jpg', 'png', 'jpeg'].includes(fileExtension)) {
