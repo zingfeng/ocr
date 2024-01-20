@@ -44,11 +44,17 @@ python main.py
 
 Tạo key tương ứng, sau đó tải về file JSON, lưu thành file google-service-account.json trong thư mục ./main (cùng thư mục với file  google-service-account.json.example)
 
-4/ Tạo thư mục drive muốn lưu và share quyền Editor cho client_email (ví dụ: ocr-agent@hust-ocr.iam.gserviceaccount.com) trong file google-service-account.json
-Lấy folder id trên URL drive của folder:
+4/ Tạo thư mục drive muốn lưu
+- Share quyền Editor cho client_email (ví dụ: ocr-agent@hust-ocr.iam.gserviceaccount.com). client_email nằm trong file google-service-account.json
+
+- Lấy folder id trên URL drive của folder:
+
 Ví dụ: 
+
 URL https://drive.google.com/drive/u/0/folders/1S4ml6iq-4eZV4AhMH5aYB9C42ervJiJMa
+
 Thì Folder Id tương ứng là: 1S4ml6iq-4eZV4AhMH5aYB9C42ervJiJMa
 
-Thay folder Id này vào file main\src\converter\drive.service.ts
+
+- Thay folder Id này vào file main\src\converter\drive.service.ts
 
